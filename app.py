@@ -17,11 +17,12 @@ st.set_page_config(
 # =========================
 st.title("📊 Nigeria Incident Analytics Dashboard")
 
-st.info("Project Introduction: This project analyzes incidents, accidents, and violence-related deaths across Nigeria.")
+st.info("Project Introduction: This project analyzes incidents, accidents, and " \
+"violence-related deaths across Nigeria.")
 
 
 st.info("""
-**Objective**
+Objective
 
 To identify:
 
@@ -34,8 +35,8 @@ To identify:
 # =========================
 st.info("""
 🎯 **Research Questions**
-1. Which top ten states recorded the highest number of incidents?
-2. Which 10 states recorded the highest number of deaths in the dataset?
+1. Which top ten(10) states recorded the highest number of incidents?
+2. Which top ten(10) states recorded the highest number of deaths in the dataset?
 3. Which incident categories accounted for the highest number of deaths?
 4. How did incidents between June 2023 - June 2024?
 """)
@@ -118,6 +119,7 @@ st.sidebar.link_button(
 # =========================
 # KPI CARDS
 # =========================
+
 col1, col2, col3 = st.columns(3)
 
 col1.metric("Total Incidents", f"{len(filtered_df):,}")
@@ -282,13 +284,14 @@ ax = sns.lineplot(
     y="Count",
     marker="o",
     linewidth=0.5,
-    color="tab:green"
+    color="tab:blue"
     
 )
 sns.despine(left=True, bottom=True)
+
 # ADD DATA LABELS
 for x, y in zip(incident_trend["Month_Year"], incident_trend["Count"]):
-    ax4.text(x, y, str(y), ha='left', va='bottom', fontsize=10)
+    ax4.text(x, y, str(y), ha='left', va='bottom', fontsize=8)
 
 ax4.set_title("RQ4: Incident Trend (June 2023 - June 2024)")
 ax4.tick_params(axis="x", rotation=45)
@@ -348,5 +351,5 @@ st.download_button(
 
 # FOOTER
 # =========================
-st.markdown("---")
-st.caption("Built with Streamlit •")
+st.caption("Built with Streamlit•") 
+st.caption("Powered by: Wikode")
