@@ -16,6 +16,7 @@ st.set_page_config(
 # HEADER
 # =========================
 st.title("📊 Nigeria Incident Analytics Dashboard")
+st.subheader("📊 Dynamic Insights (Based on Selected Filters)")
 
 st.info("Project Introduction: This project analyzes incidents, accidents, and " \
 "violence-related deaths across Nigeria.")
@@ -77,8 +78,6 @@ states = st.sidebar.multiselect(
     default=state_options,
     key="state_filter"
 )
-
-df_filtered = df[df["State"].isin(states)]
 
 years = st.sidebar.multiselect(
     "Select Year(s)",
@@ -170,12 +169,19 @@ ax1.tick_params(axis="x", rotation=45)
 plt.tight_layout()
 
 st.pyplot(fig1,use_container_width=True)
-st.info("""
-Insight: 
-- Lagos recorded the highest number of incidents (over 600), followed by Ogun and Kaduna (~500 each).
-- Other states like Delta, Benue, Niger, Borno, FCT (Abuja), Anambra, and Plateau had between 300–400 incidents.
-- Lagos clearly stands out as the most incident-prone state.
-""")
+if not filtered_df.empty:
+    top_state = filtered_df["State"].value_counts().idxmax()
+    top_value = filtered_df["State"].value_counts().max()
+
+    st.info(f"""
+    Insight:
+    
+    - {top_state} recorded the highest number of incidents ({top_value}).
+    - Other states follow based on the current selection.
+    - This indicates that incident distribution varies depending on selected filters.
+    """)
+else:
+    st.info("No data available for selected filters.")
 
 # =========================
 # CHART 2: TOP STATES BY DEATHS
@@ -211,14 +217,26 @@ ax2.tick_params(axis="x", rotation=45)
 plt.tight_layout()
 
 st.pyplot(fig2,use_container_width=True)
-st.info("""
-Insight:
-        
-- Borno had the highest death toll (~6,000), far exceeding other states.
-- Kaduna, Zamfara, Niger, and Benue also recorded several thousand deaths.
-- Lagos, despite leading in incidents, had fewer deaths compared to conflict-heavy states like Borno and Zamfara.
-- This suggests that incident severity varies significantly across states.
-""")
+if not filtered_df.empty:
+    death_state = (
+        filtered_df.groupby("State")["Number of deaths"]
+        .sum()
+        .idxmax()
+    )
+
+    death_value = (
+        filtered_df.groupby("State")["Number of deaths"]
+        .sum()
+        .max()
+    )
+
+    st.info(f"""
+    Insight:
+    
+    - {death_state} recorded the highest number of deaths ({death_value}).
+    - Fatality levels differ significantly across states.
+    - High incidents do not always mean high deaths.
+    """)
 
 # =========================
 # CHART 3: DEADLIEST INCIDENT TYPES
@@ -253,14 +271,25 @@ ax3.set_title("RQ3: Top 10 Deadliest Incident Types")
 plt.tight_layout()
 
 st.pyplot(fig3,use_container_width=True)
-st.info("""
-Insight:
+if not filtered_df.empty:
+    deadly_incident = (
+        filtered_df.groupby("Incident")["Number of deaths"]
+        .sum()
+        .idxmax()
+    )
 
-- Road accidents accounted for the highest number of deaths, surpassing conflict-related categories.
-- Banditry, Army vs Boko Haram, and Gunmen Attacks also contributed heavily to fatalities.
-- Natural disasters (like flooding) and other categories (boat mishaps, herdsmen attacks) had lower 
-  but notable death counts.
-""")
+    deadly_value = (
+        filtered_df.groupby("Incident")["Number of deaths"]
+        .sum()
+        .max()
+    )
+
+    st.info(f"""
+    Insight:
+
+    - {deadly_incident} is the deadliest incident type ({deadly_value} deaths).
+    - Different incident categories contribute differently to fatalities.
+    """)
 
 
 # =========================
@@ -306,13 +335,22 @@ ax4.tick_params(axis="x", rotation=45)
 plt.tight_layout()
 
 st.pyplot(fig4,use_container_width=True)
-st.info("""
-Insight:
+if not incident_trend.empty:
+    peak_month = incident_trend.loc[
+        incident_trend["Count"].idxmax(), "Month_Year"
+    ]
 
-- Between June 2023 and June 2024, incidents showed a fluctuating but overall rising trend.
-- Incidents were fairly stable in mid‑2023, dipped at the end of the year, hit their lowest in February 2024, then surged to a peak in 
-        April before moderating again by June 2024.
-""")
+    lowest_month = incident_trend.loc[
+        incident_trend["Count"].idxmin(), "Month_Year"
+    ]
+
+    st.info(f"""
+    Insight:
+
+    - Incidents peaked in {peak_month}.
+    - The lowest point occurred in {lowest_month}.
+    - The trend fluctuates over time based on selected filters.
+    """)
 
 
 st.info("""
