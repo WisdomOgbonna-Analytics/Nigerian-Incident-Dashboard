@@ -36,9 +36,9 @@ To identify:
 st.info("""
 🎯 **Research Questions**
 1. Which top ten(10) states recorded the highest number of incidents?
-2. Which top ten(10) states recorded the highest number of deaths in the dataset?
+2. Which top ten(10) states recorded the highest number of deaths?
 3. Which incident categories accounted for the highest number of deaths?
-4. How did incidents between June 2023 - June 2024?
+4. How did incident occurrences change between June 2023 and June 2024?
 """)
 
 # LOAD DATA
@@ -69,11 +69,16 @@ df = load_data()
 # =========================
 st.sidebar.header("🔎Dashboard Filters")
 
+state_options = sorted(df["State"].dropna().unique())
+
 states = st.sidebar.multiselect(
     "Select State",
-    options=sorted(df["State"].dropna().unique()),
-    default=sorted(df["State"].dropna().unique())
+    options=state_options,
+    default=state_options,
+    key="state_filter"
 )
+
+df_filtered = df[df["State"].isin(states)]
 
 years = st.sidebar.multiselect(
     "Select Year(s)",
@@ -109,8 +114,10 @@ filtered_df = df[
 # CONTACT BUTTON
 st.sidebar.link_button(
     "💬 Chat on WhatsApp",
-    "https://wa.me/2348035118372?text=Hello%20👋%20I%20need%20support%20regarding%20the%20dashboard."
+    "https://wa.me/2348035118372?text=Hello%20👋%20I%20need%20support%20regarding%20the%20incident%20dashboard."
 )
+
+
 st.sidebar.link_button(
     "📧 Send Email",
     "mailto:donwiz200@gmail.com"
@@ -283,15 +290,15 @@ ax = sns.lineplot(
     x="Month_Year",
     y="Count",
     marker="o",
-    linewidth=0.5,
-    color="tab:blue"
+    linewidth=1.5,
+    color="tab:green"
     
 )
 sns.despine(left=True, bottom=True)
 
 # ADD DATA LABELS
 for x, y in zip(incident_trend["Month_Year"], incident_trend["Count"]):
-    ax4.text(x, y, str(y), ha='left', va='bottom', fontsize=8)
+    ax4.text(x, y, str(y), ha='right', va='top', fontsize=11)
 
 ax4.set_title("RQ4: Incident Trend (June 2023 - June 2024)")
 ax4.tick_params(axis="x", rotation=45)
