@@ -67,12 +67,11 @@ df = load_data()
 # =========================
 # SIDEBAR
 # =========================
-st.sidebar.image("C:/Users/HP/Nigeria_incidents_project/profile image .jpg.jpeg", width=80)
+st.sidebar.markdown("## 👤 User Profile")
 
 st.sidebar.markdown("""
-Name: Ogbonna Wisdom
-                     
-Role:  Data Analyst
+**Name:** Ogbonna Wisdom  
+**Role:** Data Analyst
 """)
 st.sidebar.header("🔎Dashboard Filters")
 
