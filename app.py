@@ -2,7 +2,6 @@ import streamlit as st
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
-
 # =========================
 # PAGE CONFIG
 # =========================
@@ -16,7 +15,7 @@ st.set_page_config(
 # HEADER
 # =========================
 st.title("📊 Nigeria Incident Analytics Dashboard")
-st.subheader("📊 Dynamic Insights (Based on Selected Filters)")
+
 
 st.info("Project Introduction: This project analyzes incidents, accidents, and " \
 "violence-related deaths across Nigeria.")
@@ -68,6 +67,13 @@ df = load_data()
 # =========================
 # SIDEBAR
 # =========================
+st.sidebar.image("C:/Users/HP/Nigeria_incidents_project/profile image .jpg.jpeg", width=80)
+
+st.sidebar.markdown("""
+Name: Ogbonna Wisdom
+                     
+Role:  Data Analyst
+""")
 st.sidebar.header("🔎Dashboard Filters")
 
 state_options = sorted(df["State"].dropna().unique())
@@ -121,6 +127,19 @@ st.sidebar.link_button(
     "📧 Send Email",
     "mailto:donwiz200@gmail.com"
 )
+# CLIENT FEEDBACK BUTTON
+
+st.sidebar.markdown("### 💬 Feedback")
+
+with st.sidebar.form("feedback_form"):
+    name = st.text_input("Your Name")
+    rating = st.selectbox("Rate this dashboard", [1, 2, 3, 4, 5])
+    feedback = st.text_area("Your Feedback")
+
+    submit = st.form_submit_button("Submit")
+
+    if submit:
+        st.success("✅ Feedback submitted successfully!")
 
 # =========================
 # KPI CARDS
@@ -304,7 +323,7 @@ df_filtered = filtered_df[
 incident_trend = (
     df_filtered.groupby(["Year", "Month", "Month Name"])
     .size()
-    .reset_index(name="Count")
+    .reset_index(name="incident_Count")
 )
 
 incident_trend["Month_Year"] = (
@@ -317,7 +336,7 @@ sns.set_theme(style="whitegrid")
 ax = sns.lineplot(
     data=incident_trend,
     x="Month_Year",
-    y="Count",
+    y="incident_Count",
     marker="o",
     linewidth=1.5,
     color="tab:green"
@@ -326,7 +345,7 @@ ax = sns.lineplot(
 sns.despine(left=True, bottom=True)
 
 # ADD DATA LABELS
-for x, y in zip(incident_trend["Month_Year"], incident_trend["Count"]):
+for x, y in zip(incident_trend["Month_Year"], incident_trend["incident_Count"]):
     ax4.text(x, y, str(y), ha='right', va='top', fontsize=11)
 
 ax4.set_title("RQ4: Incident Trend (June 2023 - June 2024)")
@@ -337,11 +356,11 @@ plt.tight_layout()
 st.pyplot(fig4,use_container_width=True)
 if not incident_trend.empty:
     peak_month = incident_trend.loc[
-        incident_trend["Count"].idxmax(), "Month_Year"
+        incident_trend["incident_Count"].idxmax(), "Month_Year"
     ]
 
     lowest_month = incident_trend.loc[
-        incident_trend["Count"].idxmin(), "Month_Year"
+        incident_trend["incident_Count"].idxmin(), "Month_Year"
     ]
 
     st.info(f"""
@@ -388,7 +407,7 @@ with st.expander("📂 View Dataset"):
 # =========================
 csv = filtered_df.to_csv(index=False).encode("utf-8")
 st.download_button(
-    label="Download Report",
+    label="Download Dataset",
     data=csv,
     file_name="Nigera_incident_Project.csv",
     mime="text/csv"
@@ -396,5 +415,5 @@ st.download_button(
 
 # FOOTER
 # =========================
-st.caption("Built with Streamlit•") 
+ 
 st.caption("Powered by: Wikode")
