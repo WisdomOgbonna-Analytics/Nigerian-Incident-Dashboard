@@ -70,8 +70,7 @@ df = load_data()
 st.sidebar.markdown("## 👤 User Profile")
 
 st.sidebar.markdown("""
-**Name:** Ogbonna Wisdom  
-**Role:** Data Analyst
+Name: Ogbonna Wisdom 
 """)
 st.sidebar.header("🔎Dashboard Filters")
 
@@ -139,6 +138,24 @@ with st.sidebar.form("feedback_form"):
 
     if submit:
         st.success("✅ Feedback submitted successfully!")
+        import pandas as pd
+# sAVE FEEDBACK TO CSV FILE
+if submit:
+    new_data = pd.DataFrame({
+        "Name": [name],
+        "Rating": [rating],
+        "Feedback": [feedback]
+    })
+
+    try:
+        existing = pd.read_csv("feedback.csv")
+        updated = pd.concat([existing, new_data], ignore_index=True)
+    except FileNotFoundError:
+        updated = new_data
+
+    updated.to_csv("feedback.csv", index=False)
+
+    st.success("✅ Feedback saved!")
 
 # =========================
 # KPI CARDS
